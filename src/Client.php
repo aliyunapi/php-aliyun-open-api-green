@@ -35,12 +35,12 @@ class Client
     /**
      * @var string API版本
      */
-    public $version = 'v2';
+    public $version = '2016-12-16';
 
     /**
      * @var string 网关地址
      */
-    public $baseUri;
+    public $baseUri = 'http://green.cn-hangzhou.aliyuncs.com';
 
     /**
      * @var HttpClient
@@ -103,7 +103,7 @@ class Client
      * 获取应用列表
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getApps()
+    public function imageDetection()
     {
         return $this->getHttpClient()->get('/index');
     }
@@ -112,7 +112,7 @@ class Client
      * 查看应用信息
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function appStatus()
+    public function imageResults()
     {
         return $this->getHttpClient()->get('/' . $this->appName);
     }
@@ -123,7 +123,7 @@ class Client
      * @return \Psr\Http\Message\ResponseInterface
      * @see https://help.aliyun.com/document_detail/29150.html
      */
-    public function search(array $params)
+    public function textAntispamDetection(array $params)
     {
         return $this->getHttpClient()->get('/search', ['query' => $params]);
     }
@@ -134,50 +134,8 @@ class Client
      * @return \Psr\Http\Message\ResponseInterface
      * @see https://help.aliyun.com/document_detail/29151.html
      */
-    public function suggest(array $params)
+    public function textKeywordFilter(array $params)
     {
         return $this->getHttpClient()->get('/suggest', ['query' => $params]);
-    }
-
-    /**
-     * 重建索引
-     * @param array $params
-     * @return \Psr\Http\Message\ResponseInterface
-     * @see https://help.aliyun.com/document_detail/29152.html
-     */
-    public function indexRebuild(array $params)
-    {
-        return $this->getHttpClient()->get('/index/' . $this->appName, ['query' => array_merge(['action' => 'createtask'], $params)]);
-    }
-
-    /**
-     * 获取错误日志
-     * @param int $page
-     * @param int $pageSize
-     * @param string $sortMode
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function errorLog($page, $pageSize, $sortMode)
-    {
-        return $this->getHttpClient()->get('/index/error/' . $this->appName, ['query' => ['page' => $page, 'page_size' => $pageSize, 'sort_mode' => $sortMode]]);
-    }
-
-    /**
-     * 推送数据
-     * @param string $tableName 要上传数据的表名
-     * @param array $items 规定JSON格式，如下所示
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function Push($tableName, array $items)
-    {
-        return $this->getHttpClient()->post('/index/doc/' . $this->appName, [
-            'query' => [
-                'action' => 'push',
-                'table_name' => $tableName,
-            ],
-            'form_params' => [
-                'items' => \GuzzleHttp\json_encode($items)
-            ]
-        ]);
     }
 }
